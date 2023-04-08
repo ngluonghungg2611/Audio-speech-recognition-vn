@@ -3,4 +3,4 @@ wav2vec_vi: s2t_rec/punc_restore_vn/pretrained_model/wav2vec2-base-vietnamese-25
 punc_vocab: s2t_rec/punc_restore_vn/punc_vocab
 bert_blsmt_punc_vi: s2t_rec/punc_restore_vn/pretrained_model/best.pth
 device_ja: cpu
-device_vi: 0
+device_vi: cpu
