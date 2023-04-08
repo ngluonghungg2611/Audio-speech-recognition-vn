@@ -6,7 +6,6 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 import uvicorn
-
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 # from s2t_rec.s2t_ja import Vosk_S2T
@@ -86,7 +85,6 @@ def save_upload_file_tmp(upload_file: UploadFile, lang):
 
 
 @app.post("/speech-to-text-vi")
-
 def pred_stt_vi(request: Request, file1: UploadFile = File(...)):
 
     if request.method == "POST":
