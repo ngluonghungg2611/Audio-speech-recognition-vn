@@ -88,8 +88,8 @@ class VN_S2T:
         t0 = time.time()
         if ".mp3" in audio_path:
             subprocess.call(
-                [
                     "ffmpeg",
+                [
                     "-y",
                     "-i",
                     audio_path,
