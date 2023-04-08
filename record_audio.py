@@ -1,6 +1,7 @@
 import pyaudio
 import wave
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 # thiết lập thông số âm thanh
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -25,10 +26,14 @@ for i in tqdm(range(0, int(RATE / CHUNK * RECORD_SECONDS)), desc="Recording...")
     frames.append(data)
 
 print("Đã ghi âm xong!")
-
-# kết thúc ghi âm
 stream.stop_stream()
 stream.close()
+
+plt.plot(frames)
+plt.xlabel("Thời gian (mẫu)")
+plt.ylabel("Amplitude")
+plt.title("Biểu đồ âm thanh")
+plt.show()
 audio.terminate()
 
 # lưu tệp âm thanh
@@ -38,3 +43,4 @@ wf.setsampwidth(audio.get_sample_size(FORMAT))
 wf.setframerate(RATE)
 wf.writeframes(b''.join(frames))
 wf.close()
+# kết thúc ghi âm
