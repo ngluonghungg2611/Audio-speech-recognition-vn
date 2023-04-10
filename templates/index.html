@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Record Audio</title>
+  </head>
+  <body>
+    <button onclick="startRecording()">Start Recording</button>
+    <button onclick="stopRecording()">Stop Recording</button>
+    <br><br>
+    <audio id="audioPlayer" controls></audio>
+    
+    <script src="https://cdn.jsdelivr.net/npm/wav-encoder@1.1.0/dist/wav-encoder.min.js"></script>
+    <script>
+      let stream;
+      let mediaRecorder;
+      let chunks = [];
+
+      const startRecording = () => {
+        navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000 } })
+          .then((audioStream) => {
+            stream = audioStream;
+            mediaRecorder = new MediaRecorder(audioStream);
+            mediaRecorder.start();
+            mediaRecorder.addEventListener("dataavailable", handleDataAvailable);
+          })
+          .catch((err) => console.error("Error: " + err));
+      };
+
+      const handleDataAvailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      const stopRecording = () => {
+        mediaRecorder.stop();
+        stream.getTracks().forEach((track) => track.stop());
+        const blob = new Blob(chunks, { type: "audio/wav; codecs=opus" });
+        const audioPlayer = document.getElementById("audioPlayer");
+        audioPlayer.src = URL.createObjectURL(blob);
+
+        const fileReader = new FileReader();
+        fileReader.readAsArrayBuffer(blob);
+        fileReader.onload = () => {
+          const audioData = {
+            sampleRate: 16000,
+            channelData: [new Float32Array(fileReader.result)]
+          };
+          const wavBuffer = encodeWav(audioData);
+          const wavBlob = new Blob([wavBuffer], { type: "audio/wav" });
+          const downloadUrl = URL.createObjectURL(wavBlob);
+          const downloadLink = document.createElement("a");
+          downloadLink.href = downloadUrl;
+          downloadLink.download = "recording.wav";
+          downloadLink.click();
+          URL.revokeObjectURL(downloadUrl);
+        };
+
+        chunks = [];
+      };
+
+      const encodeWav = (audioData) => {
+        const wavBuffer = WavEncoder.encode(audioData.channelData, {
+          sampleRate: audioData.sampleRate,
+          bitDepth: 16
+        });
+        return wavBuffer;
+      };
+    </script>
+  </body>
+</html>

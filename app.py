@@ -1,7 +1,7 @@
 import os
 import shutil
 import datetime
-import torch
+# import torch
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
@@ -80,7 +80,6 @@ def save_upload_file_tmp(upload_file: UploadFile, lang):
 #         os.remove(in_file)
 #         if "error" in text:
 #             return text
-
 #         return {"text": text}
 
 

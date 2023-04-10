@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Thu âm bằng HTML5</title>
+  </head>
+  <body>
+    <button id="start">Bắt đầu tự động</button>
+    <button id="stop">Dừng lại tự động</button>
+
+    <script>
+      const startButton = document.getElementById("start");
+      const stopButton = document.getElementById("stop");
+
+      let mediaRecorder;
+      let chunks = [];
+      let intervalId;
+
+      // Bắt đầu ghi âm tự động
+      startButton.addEventListener("click", async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorder.addEventListener("dataavailable", event => {
+            chunks.push(event.data);
+          });
+
+          mediaRecorder.addEventListener("stop", () => {
+            const audioBlob = new Blob(chunks);
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.controls = true;
+            document.body.appendChild(audio);
+          });
+
+          mediaRecorder.start();
+          console.log("Đã bắt đầu ghi âm tự động");
+          intervalId = setInterval(() => {
+            mediaRecorder.stop();
+            mediaRecorder.start();
+            chunks = [];
+            console.log("Đã thu âm một lần");
+          }, 16000); // Thu âm mỗi 20 giây.
+        } catch (error) {
+          console.error("Lỗi khi bắt đầu ghi âm tự động:", error.message);
+        }
+      });
+
+      // Dừng ghi âm tự động
+      stopButton.addEventListener("click", () => {
+        clearInterval(intervalId);
+        mediaRecorder.stop();
+        console.log("Đã kết thúc ghi âm tự động");
+      });
+    </script>
+  </body>
+</html>
