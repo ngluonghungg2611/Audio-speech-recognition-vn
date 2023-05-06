@@ -1,37 +1,69 @@
-import matplotlib.pyplot as plt
+import pyaudio
 import numpy as np
-from scipy.io import wavfile
+import matplotlib.pyplot as plt
+from IPython import display as disp
+import keyboard
+# import torch
+# import torchaudio
+# from denoiser import pretrained
+# from denoiser.dsp import convert_audio
+# from pydub import AudioSegment
+import wave
+CHUNK = 1024  # Kích thước mỗi chunk dữ liệu âm thanh
+FORMAT = pyaudio.paInt16  # Định dạng âm thanh
+CHANNELS = 1  # Số kênh âm thanh (mono = 1, stereo = 2)
+RATE = 16000  # Tốc độ lấy mẫu âm thanh
+WAVE_OUTPUT_FILENAME = "test.wav"
 
-# Đọc tệp âm thanh
-sample_rate, audio = wavfile.read("output.wav")
+p = pyaudio.PyAudio()
 
-# Chuyển đổi dữ liệu âm thanh sang dạng số thực
-audio = audio.astype(np.float32)
 
-# Tính toán số mẫu và thời gian tương ứng
-num_samples = len(audio)
-duration = num_samples / sample_rate
+#----
+# device = "cpu"
+# model_denoise = pretrained.dns64().to(device)
+#----
+# Mở luồng thu âm
+stream = p.open(format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                frames_per_buffer=CHUNK)
 
-# Tính toán độ phân giải của hình ảnh
-resolution = 1000  # Độ phân giải của hình ảnh
-samples_per_pixel = int(num_samples / resolution)
-horizontal_resolution = samples_per_pixel * resolution
-vertical_resolution = 256
+# Vòng lặp để biểu diễn dữ liệu âm thanh theo thời gian thực
+frames = []
+while True:
+    # Đọc chunk dữ liệu âm thanh từ luồng thu âm
+    data = stream.read(CHUNK)
+    frames.append(data)
+    # Chuyển đổi dữ liệu âm thanh thành mảng numpy
+    
+    audio_data = np.frombuffer(data, dtype=np.int16)
+    # Biểu diễn dữ liệu âm thanh
+    plt.plot(audio_data)
+    plt.xlabel('Time')
+    plt.ylabel('Amplitude')
+    plt.title('Real-time Audio Waveform')
+    plt.ylim(-32768, 32767)  # Đặt giới hạn đồ thị theo giá trị âm thanh
+    plt.pause(0.01)
+    plt.clf()  # Xóa đồ thị trước khi vẽ đồ thị mới
+    # if keyboard.is_pressed('q'):
+    #     plt.close()  
+    #     break
+    # if plt.waitforbuttonpress():
+    #     break
+    if plt.waitforbuttonpress(timeout=0.001):
+        key = plt.gcf().canvas.key_press_event
+        if key != '':  # kiểm tra xem phím được nhấn có phải là phím bất kỳ không
+            break
+# plt.show()
+# Dừng luồng thu âm và đóng kết nối
+wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+wf.setnchannels(CHANNELS)
+wf.setsampwidth(audio_data.get_sample_size(FORMAT))
+wf.setframerate(RATE)
+wf.writeframes(b''.join(frames))
+wf.close()
 
-# Tính toán dữ liệu của từng pixel
-data = np.zeros((vertical_resolution, horizontal_resolution), dtype=np.float32)
-for i in range(resolution):
-    start_sample = i * samples_per_pixel
-    end_sample = start_sample + samples_per_pixel
-    pixel_data = audio[start_sample:end_sample]
-    pixel_max = np.max(np.abs(pixel_data))
-    data[:, i * samples_per_pixel:(i + 1) * samples_per_pixel] = np.abs(pixel_data) / pixel_max
-
-# Hiển thị hình ảnh
-fig, ax = plt.subplots(figsize=(10, 5))
-ax.imshow(data, cmap='gray', aspect='auto', interpolation='nearest')
-ax.set_xlim(0, horizontal_resolution)
-ax.set_ylim(vertical_resolution, 0)
-ax.axis('off')
-plt.title("Hình ảnh âm thanh")
-plt.show()
+stream.stop_stream()
+stream.close()
+p.terminate()

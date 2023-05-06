@@ -25,16 +25,17 @@ for i in tqdm(range(0, int(RATE / CHUNK * RECORD_SECONDS)), desc="Recording...")
     data = stream.read(CHUNK)
     frames.append(data)
 
+
 print("Đã ghi âm xong!")
 stream.stop_stream()
 stream.close()
 
-plt.plot(frames)
-plt.xlabel("Thời gian (mẫu)")
-plt.ylabel("Amplitude")
-plt.title("Biểu đồ âm thanh")
-plt.show()
-audio.terminate()
+# plt.plot(frames)
+# plt.xlabel("Thời gian (mẫu)")
+# plt.ylabel("Amplitude")
+# plt.title("Biểu đồ âm thanh")
+# plt.show()
+# audio.terminate()
 
 # lưu tệp âm thanh
 wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
