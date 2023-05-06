@@ -7,11 +7,11 @@
   <body>
     <button id="start">Bắt đầu tự động</button>
     <button id="stop">Dừng lại tự động</button>
-
+    <button id="saveRecordingButton">Save Recording</button>
     <script>
       const startButton = document.getElementById("start");
       const stopButton = document.getElementById("stop");
-
+      const saveButton = document.getElementById('saveRecordingButton');
       let mediaRecorder;
       let chunks = [];
       let intervalId;
@@ -19,7 +19,7 @@
       // Bắt đầu ghi âm tự động
       startButton.addEventListener("click", async () => {
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000 } });
           mediaRecorder = new MediaRecorder(stream);
 
           mediaRecorder.addEventListener("dataavailable", event => {
@@ -41,7 +41,7 @@
             mediaRecorder.start();
             chunks = [];
             console.log("Đã thu âm một lần");
-          }, 16000); // Thu âm mỗi 20 giây.
+          }, 20000); // Thu âm mỗi 20 giây.
         } catch (error) {
           console.error("Lỗi khi bắt đầu ghi âm tự động:", error.message);
         }
@@ -52,6 +52,25 @@
         clearInterval(intervalId);
         mediaRecorder.stop();
         console.log("Đã kết thúc ghi âm tự động");
+      });
+
+      saveButton.addEventListener('click', () => {
+        if (chunks.length > 0) {
+          const blob = new Blob(chunks, { type: 'audio/wav' });
+          const formData = new FormData();
+          formData.append('audio', blob);
+          fetch('/media/vti/DATA2/Hung/s2s/save-audio/audio.wav', { method: 'POST', body: formData })
+            .then((response) => {
+              if (response.ok) {
+                console.log('Audio saved successfully');
+              } else {
+                console.error('Error saving audio');
+              }
+            })
+            .catch((error) => {
+              console.error('Error saving audio:', error);
+            });
+        }
       });
     </script>
   </body>
