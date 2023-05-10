@@ -59,7 +59,7 @@ while True:
 # Dừng luồng thu âm và đóng kết nối
 wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
 wf.setnchannels(CHANNELS)
-wf.setsampwidth(audio_data.get_sample_size(FORMAT))
+wf.setsampwidth(p.get_sample_size(FORMAT))
 wf.setframerate(RATE)
 wf.writeframes(b''.join(frames))
 wf.close()
