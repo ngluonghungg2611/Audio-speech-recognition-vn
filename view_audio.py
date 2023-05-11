@@ -45,7 +45,7 @@ while True:
     plt.ylabel('Amplitude')
     plt.title('Real-time Audio Waveform')
     plt.ylim(-32768, 32767)  # Đặt giới hạn đồ thị theo giá trị âm thanh
-    plt.pause(0.01)
+    plt.pause(0.001)
     plt.clf()  # Xóa đồ thị trước khi vẽ đồ thị mới
     # if keyboard.is_pressed('q'):
     #     plt.close()  
