@@ -33,8 +33,7 @@ vn_s2t = VN_S2T(cfg)
 if not os.path.exists("./save_audio/vi"):
     os.makedirs("./save_audio/vi")
 
-if not os.path.exists("./save_audio/ja"):
-    os.makedirs("./save_audio/ja")
+
 
 if not os.path.exists("./s2t_rec/audio_chunks"):
     os.makedirs("./s2t_rec/audio_chunks")
