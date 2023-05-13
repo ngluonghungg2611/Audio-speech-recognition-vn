@@ -63,7 +63,7 @@ def read_audio():
         frames.append(data)
         end_time = time.time()
         time_audio = int(end_time - strart_time)
-        # print(time_audio)
+        # print(time)
         # Chuyển đổi dữ liệu âm thanh thành mảng numpy
         audio_data = np.frombuffer(data, dtype=np.int16)
         # Biểu diễn dữ liệu âm thanh
