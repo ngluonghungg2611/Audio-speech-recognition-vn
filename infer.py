@@ -88,6 +88,7 @@ def read_audio():
             # print(list_text)
             audio_file = out_put_path
             output_id += 1
+            frames = []
         
         
 def pred_audio():
