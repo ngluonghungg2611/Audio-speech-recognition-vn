@@ -2,6 +2,11 @@ import pyaudio
 import wave
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import argparse
+
+#----------- CLI ---------------
+parser = argparse.ArgumentParser()
+parser.add_argument("--seconds", type=int, default=5, help="Import time to record")
 # thiết lập thông số âm thanh
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
