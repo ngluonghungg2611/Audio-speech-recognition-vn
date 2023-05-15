@@ -3,17 +3,19 @@ import wave
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import argparse
-
+import os
 #----------- CLI ---------------
 parser = argparse.ArgumentParser()
 parser.add_argument("--seconds", type=int, default=5, help="Import time to record")
+args = parser.parse_args()
 # thiết lập thông số âm thanh
+id_file = len(os.listdir("./audio_test"))
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 CHUNK = 1024
-RECORD_SECONDS = 5
-WAVE_OUTPUT_FILENAME = "audio_test/audio_test_{}s.wav".format(str(RECORD_SECONDS))
+RECORD_SECONDS = args.seconds
+WAVE_OUTPUT_FILENAME = "audio_test/{}_audio__{}s.wav".format(str(id_file) ,str(RECORD_SECONDS))
 
 # khởi tạo PyAudio
 audio = pyaudio.PyAudio()
